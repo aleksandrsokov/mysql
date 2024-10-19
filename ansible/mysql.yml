@@ -1,0 +1,72 @@
+---
+- name: sql
+  become: true
+  hosts: all
+  tasks:
+
+  - name: install packages 
+    dnf:
+      name: 
+       - python3
+      state: present
+      update_cache: true  
+
+  - name: install percona repo
+    shell: yum install -y https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+
+  - name: enable percona 5.7
+    shell: percona-release setup ps57  
+
+  #- name: enable-only release
+  #  shell: percona-release enable-only ps-8x-innovation release
+
+  #- name: enable tools
+  #  shell: percona-release enable tools release
+
+  - name: install percona
+    dnf: 
+      name: Percona-Server-server-57
+      state: present
+
+  - name: copy configs
+    template: 
+      src: temp/{{ item }}
+      dest: /etc/my.cnf.d/{{ item }}
+    with_items:
+      - 01-base.cnf
+      - 02-max-connections.cnf
+      - 03-performance.cnf
+      - 04-slow-query.cnf
+      - 05-binlog.cnf
+
+  - name: copy damp
+    copy: 
+      src: temp/bet.dmp
+      dest: /tmp/bet.dmp
+    when: (ansible_hostname == "mysql1")
+
+  - name: change server ID
+    shell: sed -i 's/server-id = 1/server-id = 2/g' /etc/my.cnf.d/01-base.cnf
+    when: (ansible_hostname == "mysql2")
+
+  - name: replicate-ignore-table=bet.events_on_demand
+    shell: sed -i 's/\#replicate-ignore-table=bet.events_on_demand/replicate-ignore-table=bet.events_on_demand/g' /etc/my.cnf.d/05-binlog.cnf
+    when: (ansible_hostname == "mysql2")
+
+  - name: replicate-ignore-table=bet.v_same_event
+    shell: sed -i 's/\#replicate-ignore-table=bet.v_same_event/replicate-ignore-table=bet.v_same_event/g' /etc/my.cnf.d/05-binlog.cnf
+    when: (ansible_hostname == "mysql2")
+
+  - name: restart mysql
+    service:
+      name: mysql
+      state: restarted
+
+  - name: get generated password
+    shell: cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'
+    register: out
+
+  - name: print pass
+    debug:
+      msg: "{{ out.stdout }}"
+ 
