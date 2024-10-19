@@ -30,12 +30,12 @@ mysql> SHOW TABLES;
 +---------------+
 
 подключаем реплику  
-CHANGE MASTER TO MASTER_HOST = "192.168.50.10", MASTER_PORT = 3306, MASTER_USER = "repl", MASTER_PASSWORD = "!OtusLinux2018", MASTER_AUTO_POSITION = 1;
+CHANGE MASTER TO MASTER_HOST = "192.168.50.10", MASTER_PORT = 3306, MASTER_USER = "repl", MASTER_PASSWORD = "!OtusLinux2018", MASTER_AUTO_POSITION = 1;  
 
 
-проверка репликации:
-![alt text](<Screenshot from 2024-10-19 15-38-48.png>)
-![alt text](<Screenshot from 2024-10-19 15-39-31.png>)
+проверка репликации:  
+![alt text](<Screenshot from 2024-10-19 15-38-48.png>)  
+![alt text](<Screenshot from 2024-10-19 15-39-31.png>)  
 
 скрин binlog файла:  
 ![alt text](<Screenshot from 2024-10-19 15-36-34.png>)
