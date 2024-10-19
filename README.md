@@ -34,7 +34,9 @@ CHANGE MASTER TO MASTER_HOST = "192.168.50.10", MASTER_PORT = 3306, MASTER_USER 
 
 
 проверка репликации:  
+мастер: 
 ![alt text](<Screenshot from 2024-10-19 15-38-48.png>)  
+реплика:  
 ![alt text](<Screenshot from 2024-10-19 15-39-31.png>)  
 
 скрин binlog файла:  
